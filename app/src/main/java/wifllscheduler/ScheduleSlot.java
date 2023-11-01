@@ -6,6 +6,7 @@ public class ScheduleSlot {
     private Integer teamNumber;
     private LocalTime start;
     private LocalTime end;
+    private LocalTime offset;
     private SlotType type;
     private Location location;
     
@@ -39,16 +40,21 @@ public class ScheduleSlot {
         UNKNOWN
     }
 
-    public ScheduleSlot(Integer teamNumber, SlotType type, Location location, int startHour, int startMinute, int lengthMinutes) {
+    public ScheduleSlot(Integer teamNumber, SlotType type, Location location, int startHour, int startMinute, LocalTime blockStartTime, int lengthMinutes) {
         this.teamNumber = teamNumber;
         this.location = location;
+        while (startMinute >= 60) {
+            startHour++;
+            startMinute = startMinute - 60;
+        }
         start = LocalTime.of(startHour, startMinute);
         end = start.plusMinutes(lengthMinutes);
+        offset = timeDelta(start, blockStartTime);
         this.type = type;
     }
 
     public String toString() {
-        return "Slot for team " + teamNumber + " is of type " + type + " it is in " + location + " with a start Time: " + start + " ends at " + end;
+        return "Slot for team " + teamNumber + " is of type " + type + " it is in " + location + " with a start Time: " + start + " ends at " + end + " startng " + offset + " in the block";
     }
 
     public static Location getJudgingLocation(int n) {
@@ -90,5 +96,20 @@ public class ScheduleSlot {
 
     public int getTeamNumber() {
         return teamNumber;
+    }
+
+    private LocalTime timeDelta(LocalTime t1, LocalTime t2) {
+        LocalTime delta;
+        int hours;
+        int minutes;
+        int time2TotalMinutes = t2.getHour() * 60 + t2.getMinute();
+        int time1TotalMinutes = t1.getHour() * 60 + t1.getMinute();
+        int deltaMinutes = Math.abs(time2TotalMinutes - time1TotalMinutes);
+
+        minutes = deltaMinutes % 60;
+        hours = (deltaMinutes - minutes) / 60;
+        delta = LocalTime.of(hours, minutes);
+
+        return delta;
     }
 }
