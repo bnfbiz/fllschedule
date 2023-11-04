@@ -20,12 +20,14 @@ public class App {
         TeamList teams;
         Schedule schedule;
         String inputFilename = "";
+        String outputFilename = "test.xlsx";
         Scheduler scheduler;
     
         
         // Process the command line
         Options options = new Options();
         options.addOption("i", "inputFile", true, "The name of the XLS Input file");
+        options.addOption("o", "outputFile", true, "The name of the XLS Output file");
 
         CommandLineParser commandLineParser = new DefaultParser();
         CommandLine cmd;
@@ -33,6 +35,9 @@ public class App {
             cmd = commandLineParser.parse(options, args);
             if (cmd.hasOption("i")) {
                 inputFilename = cmd.getOptionValue("i");
+            }
+            if (cmd.hasOption("o")) {
+                outputFilename = cmd.getOptionValue("i");
             }
         } catch ( Exception e) {
             System.out.println("Got exception " + e);
@@ -55,32 +60,14 @@ public class App {
         }
 
         scheduler = excelFile.getSchedulingData();
-        teams = new TeamList(24);
+        // teams = new TeamList(24);
+        teams = new TeamList(excelFile);
         System.out.println(new App().getGreeting());
-        // scheduler.setDayStartTime(8, 0);
-        // scheduler.setCoachMeetingTime1(8, 0);
-        // scheduler.setMinTimeBetweenActivities(1,0);
-        // scheduler.setLunchTime(11, 30);
-        // scheduler.addJudgingTime(9, 0);
-        // scheduler.addJudgingTime(10, 0);
-        // scheduler.addJudgingTime(10, 45);
-        // scheduler.addJudgingTime(12, 30);
-        // scheduler.addJudgingTime(13, 45);
-        // scheduler.addJudgingTime(14, 30);
-        // scheduler.setPracticeMatchTime1(9, 0);
-        // scheduler.setPracticeMatchTime2(10,30);
-        // scheduler.setRound1MatchTime1(10,45);
-        // scheduler.setRound1MatchTime2(12,30);
-        // scheduler.setRound2MatchTime1(12,30);
-        // scheduler.setRound2MatchTime2(13,30);
-        // scheduler.setRound3MatchTime1(13,30);
-        // scheduler.setRound3MatchTime2(14,30);
-        // scheduler.setMatchAlternateTime(5);
-        System.out.println(scheduler);
-        System.out.println("Got teams: " + teams.toString());
 
         // Schedule the judging times
         schedule = new Schedule(scheduler, teams);
-        System.out.println(schedule);
+        // System.out.println(schedule);
+        excelFile.updateScheduleTab(schedule);
+        excelFile.createUpdatedWorkbook(outputFilename);
     }
 }

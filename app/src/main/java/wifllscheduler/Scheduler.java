@@ -3,20 +3,32 @@ package wifllscheduler;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 
+import wifllscheduler.ScheduleSlot.SlotType;
+
 public class Scheduler {
     private int numJudgingRooms;
     private int numRobotGameTablePairs;
     private LocalTime dayStartTime;
     private LocalTime coachMeetingTime1;
+    private String coachMeetingTime1CellLoc;
     private LocalTime coachMeetingTime2;
+    private String coachMeetingTime2CellLoc;
     private LocalTime practiceMatchTime1;
+    private String practiceMatchTime1CellLoc;
     private LocalTime practiceMatchTime2;
+    private String practiceMatchTime2CellLoc;
     private LocalTime round1MatchTime1;
+    private String round1MatchTime1CellLoc;
     private LocalTime round1MatchTime2;
+    private String round1MatchTime2CellLoc;
     private LocalTime round2MatchTime1;
+    private String round2MatchTime1CellLoc;
     private LocalTime round2MatchTime2;
+    private String round2MatchTime2CellLoc;
     private LocalTime round3MatchTime1;
+    private String round3MatchTime1CellLoc;
     private LocalTime round3MatchTime2;
+    private String round3MatchTime2CellLoc;
     private LocalTime matchAlternateTime;
     private LocalTime minTimeBetweenActivities;
     private LocalTime lunchTime;
@@ -313,5 +325,92 @@ public class Scheduler {
 
     public int getNumberOfGameTablePairs() {
         return numRobotGameTablePairs;
+    }
+
+    public void setCellLocation(SlotType slotType, String location) {
+
+        switch (slotType) {
+            case COACHES_MEETING_TIME1:
+                coachMeetingTime1CellLoc = location;
+                break;
+            case COACHES_MEETING_TIME2:
+                coachMeetingTime2CellLoc = location;
+                break;
+            case PRACTICE_MATCH_TIME1:
+                practiceMatchTime1CellLoc = location;
+                break;
+            case PRACTICE_MATCH_TIME2:
+                practiceMatchTime2CellLoc = location;
+                break;
+            case COMPETITION_MATCH1_TIME1:
+                round1MatchTime1CellLoc = location;
+                break;
+            case COMPETITION_MATCH1_TIME2:
+                round1MatchTime2CellLoc = location;
+                break;
+            case COMPETITION_MATCH2_TIME1:
+                round2MatchTime1CellLoc = location;
+                break;
+            case COMPETITION_MATCH2_TIME2:
+                round2MatchTime2CellLoc = location;
+                break;
+            case COMPETITION_MATCH3_TIME1:
+                round3MatchTime1CellLoc = location;
+                break;
+            case COMPETITION_MATCH3_TIME2:
+                round3MatchTime2CellLoc = location;
+                break;
+            case JUDGING:
+                // not currenty needed
+                break;
+            default:
+                System.out.println("setLocation: Unknown slot type");
+                break;
+        }
+    }
+
+    public String getCellLocation(SlotType slotType) {
+        String location;
+        location="";
+        switch (slotType) {
+            case COACHES_MEETING_TIME1:
+                location = coachMeetingTime1CellLoc;
+                break;
+            case COACHES_MEETING_TIME2:
+                location = coachMeetingTime2CellLoc;
+                break;
+            case PRACTICE_MATCH_TIME1:
+                location = practiceMatchTime1CellLoc;
+                break;
+            case PRACTICE_MATCH_TIME2:
+                location = practiceMatchTime2CellLoc;
+                break;
+            case COMPETITION_MATCH1_TIME1:
+                location = round1MatchTime1CellLoc;
+                break;
+            case COMPETITION_MATCH1_TIME2:
+                location = round1MatchTime2CellLoc;
+                break;
+            case COMPETITION_MATCH2_TIME1:
+                location = round2MatchTime1CellLoc;
+                break;
+            case COMPETITION_MATCH2_TIME2:
+                location = round2MatchTime2CellLoc;
+                break;
+            case COMPETITION_MATCH3_TIME1:
+                location = round3MatchTime1CellLoc;
+                break;
+            case COMPETITION_MATCH3_TIME2:
+                location = round3MatchTime2CellLoc;
+                break;
+            case JUDGING:
+                // not currenty needed
+                break;
+            default:
+                System.out.println("getLocation: Unknown slot type");
+                location = "Cell location unknown";
+                break;
+        }
+        return location;
     }
 }

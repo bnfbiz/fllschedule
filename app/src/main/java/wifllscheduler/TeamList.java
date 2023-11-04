@@ -15,13 +15,19 @@ public class TeamList {
         try {
             excelFile = new ExcelFileReader(filename);
             teams = excelFile.getTeams();
-            System.out.println("Got teams: " + teams.toString());
         } catch ( Exception e) {
             System.out.println("Got exception" + e);
             System.exit(-1);
         }
         addWildCardTeam();
     }
+
+    public TeamList(ExcelFileReader excelFile) {
+   
+        teams = excelFile.getTeams();
+        addWildCardTeam();
+    }
+
 
     /**
      * Construct a generic team list based on team count

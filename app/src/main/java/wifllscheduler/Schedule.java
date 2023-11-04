@@ -2,6 +2,8 @@ package wifllscheduler;
 
 import java.time.LocalTime;
 
+import wifllscheduler.ScheduleSlot.SlotType;
+
 public class Schedule {
     private ScheduleSlot[][] schedule;
     private int timeSlots;
@@ -23,10 +25,9 @@ public class Schedule {
 
         // Create the coaches meeting
         int slot = scheduleSlot(schedulerInfo.getCoachMeetingTime1());
-        System.out.println("Got slot " + slot + " for Coaches Meeting");
         for (int t=0; t < teamCount; t++) {
             Team team = teamList.getTeam(t);
-            schedule[slot][t] = new ScheduleSlot(team.getTeamNumber(), ScheduleSlot.SlotType.COACHES_MEETING, ScheduleSlot.Location.COMPETITION_FIELD, schedulerInfo.getCoachMeetingTime1().getHour(), schedulerInfo.getCoachMeetingTime1().getMinute(), schedulerInfo.getCoachMeetingTime1(), 15);
+            schedule[slot][t] = new ScheduleSlot(team.getTeamNumber(), ScheduleSlot.SlotType.COACHES_MEETING_TIME1, ScheduleSlot.Location.COMPETITION_FIELD, schedulerInfo.getCoachMeetingTime1().getHour(), schedulerInfo.getCoachMeetingTime1().getMinute(), schedulerInfo.getCoachMeetingTime1(), 15);
         }
         // Create the judging sessions
         LocalTime[] judgingTimes = schedulerInfo.getJudgingTimes();
@@ -69,12 +70,12 @@ public class Schedule {
         int roundStartTeam = judgingPanels;
         int roundEndTeam = teamCount;
         LocalTime roundStartTime = schedulerInfo.getPracticeMatchTime1();
-        LocalTime matchEndTime = setPracticeSchedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        LocalTime matchEndTime = setPracticeSchedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.PRACTICE_MATCH_TIME1);
         // The group that was in judging
         roundStartTeam = 0;     
         roundEndTeam = judgingPanels;
         roundStartTime = schedulerInfo.getPracticeMatchTime2();
-        matchEndTime = setPracticeSchedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setPracticeSchedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.PRACTICE_MATCH_TIME2);
 
         /**
          * Schedule the competitions for Round1
@@ -89,8 +90,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
-        System.out.println("Round1 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam);
-        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME1);
         // Up through the group that was in judging
         roundEndTeam = roundStartTeam;
         roundStartTime = schedulerInfo.getRound1MatchTime2();
@@ -99,8 +99,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Round1 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam);
-        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME2);
 
         /**
          * Schedule the competitions for Round2
@@ -115,8 +114,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
-        System.out.println("Round2 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam + " with a match end time of " + matchEndTime);
-        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME1);
         // Up through the group that was in judging
         roundEndTeam = roundStartTeam;
         roundStartTime = schedulerInfo.getRound2MatchTime2();
@@ -125,8 +123,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Round2 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam+ " with a match end time of " + matchEndTime);
-        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME2);
 
         /**
          * Schedule the competitions for Round3
@@ -141,8 +138,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
-        System.out.println("Round3 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam + " with a match end time of " + matchEndTime);
-        matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME1);
         // Up through the group that was in judging
         roundEndTeam = roundStartTeam;
         roundStartTime = schedulerInfo.getRound3MatchTime2();
@@ -151,8 +147,7 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Round3 Starts at " + roundStartTime + " with team " + roundStartTeam + " and goes through team " + roundEndTeam+ " with a match end time of " + matchEndTime);
-        matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs);
+        matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME2);
     }
 
     public String toString() {
@@ -183,7 +178,6 @@ public class Schedule {
         }
         newTime = LocalTime.of(hours, minutes);
 
-        System.out.println("addHourMinutes: t1: " + t1 + " t2: " + t2 + " is now " + newTime);
         return newTime;
     }
 
@@ -212,7 +206,6 @@ public class Schedule {
         for (int t = 0; t < teamList.getSize(); t++) {
             try {                
                 if (schedule[slot][t].isJudgingSlot()) {
-                    System.out.println("Slot " + slot + " has team " + t + " in judging");
                     if (t >= highTeamSLot) {
                         highTeamSLot = t;
                         found = true;
@@ -224,13 +217,12 @@ public class Schedule {
         }
 
         if (!found) {
-            System.out.println("Didn't get a team in judging so backing up a slot " + slot);
             highTeamSLot = getHighestTeamPosInJudging(teamList, slot - 1);
         }
         return highTeamSLot;
     }
 
-    private LocalTime setPracticeSchedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs) {
+    private LocalTime setPracticeSchedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs, ScheduleSlot.SlotType slotType) {
         LocalTime blockStartTime = matchTime;
         for (int t = roundStartTeam; t < roundEndTeam; t += gameTablePairs*2) {
             // determine how many wildcard teams
@@ -250,10 +242,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getTeam(t+3);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 1:
@@ -261,10 +253,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 2:
@@ -273,8 +265,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getTeam(t+1);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 case 3:
@@ -283,8 +275,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.PRACTICE_MATCH, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 default:
@@ -294,7 +286,7 @@ public class Schedule {
         return matchTime;
     }
 
-    private LocalTime setRound1Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs) {
+    private LocalTime setRound1Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs, ScheduleSlot.SlotType slotType) {
         LocalTime blockStartTime = matchTime;
         for (int t = roundStartTeam; t < roundEndTeam; t += gameTablePairs*2) {
             // determine how many wildcard teams
@@ -314,10 +306,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getTeam(t+3);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 1:
@@ -325,10 +317,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 2:
@@ -337,8 +329,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getTeam(t+1);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 case 3:
@@ -347,8 +339,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH1, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 default:
@@ -358,7 +350,7 @@ public class Schedule {
         return matchTime;
     }
 
-        private LocalTime setRound2Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs) {
+        private LocalTime setRound2Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs, ScheduleSlot.SlotType slotType) {
             LocalTime blockStartTime = matchTime;
             for (int t = roundStartTeam; t < roundEndTeam; t += gameTablePairs*2) {
             // determine how many wildcard teams
@@ -378,10 +370,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getTeam(t+3);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 1:
@@ -389,10 +381,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 2:
@@ -401,8 +393,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getTeam(t+1);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 case 3:
@@ -411,8 +403,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH2, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 default:
@@ -422,7 +414,7 @@ public class Schedule {
         return matchTime;
     }
 
-    private LocalTime setRound3Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs) {
+    private LocalTime setRound3Schedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs, ScheduleSlot.SlotType slotType) {
         LocalTime blockStartTime = matchTime;
         for (int t = roundStartTeam; t < roundEndTeam; t += gameTablePairs*2) {
             // determine how many wildcard teams
@@ -442,10 +434,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getTeam(t+3);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() +  matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() +  matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 1:
@@ -453,10 +445,10 @@ public class Schedule {
                     team2 = teamList.getTeam(t+1);
                     team3 = teamList.getTeam(t+2);
                     team4 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
-                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+2] = new ScheduleSlot(team3.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDB, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
+                    schedule[slot][t+3] = new ScheduleSlot(team4.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_REDA, matchTime.getHour(), matchTime.getMinute() + matchDuration, blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration*2));
                     break;
                 case 2:
@@ -465,8 +457,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getTeam(t+1);
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 case 3:
@@ -475,8 +467,8 @@ public class Schedule {
                      */
                     team1 = teamList.getTeam(t);
                     team2 = teamList.getWildCardTeam();
-                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
-                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), ScheduleSlot.SlotType.COMPETITION_MATCH3, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t] = new ScheduleSlot(team1.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEA, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
+                    schedule[slot][t+1] = new ScheduleSlot(team2.getTeamNumber(), slotType, ScheduleSlot.Location.TABLE_BLUEB, matchTime.getHour(), matchTime.getMinute(), blockStartTime, matchDuration);
                     matchTime = addHourMinutes(matchTime, LocalTime.of(0, matchDuration));
                     break;
                 default:
@@ -484,5 +476,26 @@ public class Schedule {
             }
         }
         return matchTime;
+    }
+
+    public int getNumberOfTimeSlots() {
+        return timeSlots;
+    }
+
+    public int getTeamCount() {
+        return teamCount;
+    }
+
+    public LocalTime getTimeForSlot(int r) {
+        int deltaMinutes = r * scheduleMinutes;
+        int hours = dayStartTime.getHour();
+
+        int minutes = deltaMinutes % 60;
+        hours = hours + ((deltaMinutes - minutes) / 60);
+        return LocalTime.of(hours, minutes);
+    }
+
+    public ScheduleSlot getSlotInfo(int timeSlot, int team) {
+        return schedule[timeSlot][team];
     }
 }
