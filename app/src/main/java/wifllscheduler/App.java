@@ -37,7 +37,7 @@ public class App {
                 inputFilename = cmd.getOptionValue("i");
             }
             if (cmd.hasOption("o")) {
-                outputFilename = cmd.getOptionValue("i");
+                outputFilename = cmd.getOptionValue("o");
             }
         } catch ( Exception e) {
             System.out.println("Got exception " + e);
@@ -68,6 +68,7 @@ public class App {
         schedule = new Schedule(scheduler, teams);
         // System.out.println(schedule);
         excelFile.updateScheduleTab(schedule);
+        System.out.println("Processing out put file " + outputFilename);
         excelFile.createUpdatedWorkbook(outputFilename);
     }
 }

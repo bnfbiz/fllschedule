@@ -31,6 +31,9 @@ public class Schedule {
         }
         // Create the judging sessions
         LocalTime[] judgingTimes = schedulerInfo.getJudgingTimes();
+        for (int c = 0; c < judgingTimes.length; c++) {
+            System.out.println("Got System judging time: " + judgingTimes[c]);
+        }
         int judgingTimeIndex = 0;
         LocalTime nextJudgingTime = judgingTimes[judgingTimeIndex++];
         slot = scheduleSlot(nextJudgingTime);
@@ -229,7 +232,7 @@ public class Schedule {
             int wildcardTeamCount = 0;
             if (t + (gameTablePairs * 2) > roundEndTeam) {
                 wildcardTeamCount = (t + (gameTablePairs * 2) - roundEndTeam);
-                System.out.println("The wildcardTeamCount is " + wildcardTeamCount);
+                System.out.println("The wildcardTeamCount is " + wildcardTeamCount + " for matchTIme " + matchTime);
             }
             int slot = scheduleSlot(matchTime);
             Team team1;

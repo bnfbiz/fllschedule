@@ -300,7 +300,7 @@ public class ExcelFileReader {
         XSSFRow rows[];
 
         rows = new XSSFRow[scheduleInfo.getTeamCount()+2];
-        for (int c = 0; c < teamCount+1; c++) {
+        for (int c = 0; c < teamCount+2; c++) {
             int teamRow = c + 1;
             rows[c]= sheet.createRow(c);
             if (c > 0) {
@@ -334,10 +334,11 @@ public class ExcelFileReader {
 
                     if (slot.isCoachMeetingSlot()) {
                         XSSFCell cell = rows[row].createCell(1);
-                        cell.setCellValue(scheduleInfo.getTimeForSlot(t).format(DateTimeFormatter.ofPattern("hh:mm a")));
+                        cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                     } else if (slot.isJudgingSlot()) {
                         XSSFCell cell = rows[row].createCell(2);
-                        cell.setCellValue(scheduleInfo.getTimeForSlot(t).format(DateTimeFormatter.ofPattern("hh:mm a")));
+                        // cell.setCellValue(scheduleInfo.getTimeForSlot(t).format(DateTimeFormatter.ofPattern("hh:mm a")));
+                        cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                         XSSFCell cell2 = rows[row].createCell(3);
                         int judgingLocation = slot.getJudgingIndex();
                         cell2.setCellValue(judingColorTable.get(judgingLocation));

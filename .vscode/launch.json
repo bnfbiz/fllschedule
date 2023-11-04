@@ -9,7 +9,20 @@
             "name": "Launch with Arguments Prompt",
             "request": "launch",
             "mainClass": "",
-            "args": "--inputFile 24Team4JudgingRooms.xlsx"
+            "args": "--inputFile 24Team4JudgingRooms.xlsx -o 2023-24Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "16 teams 3 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 16Team3JudgingRooms.xlsx -o 2023-16Team3JudgingRooms.xlsx"
+        },{
+            "type": "java",
+            "name": "23 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 23Team4JudgingRooms.xlsx -o 2023-23Team4JudgingRooms.xlsx"
         },
         {
             "type": "java",
