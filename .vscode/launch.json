@@ -23,8 +23,19 @@
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 23Team4JudgingRooms.xlsx -o 2023-23Team4JudgingRooms.xlsx"
-        },
-        {
+        },{
+            "type": "java",
+            "name": "36 teams 6 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 36Team6JudgingRooms.xlsx -o 2023-36Team6JudgingRooms.xlsx"
+        },{
+            "type": "java",
+            "name": "16 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 16Team4JudgingRooms.xlsx -o 2023-16Team4JudgingRooms.xlsx"
+        },{
             "type": "java",
             "name": "Current File",
             "request": "launch",

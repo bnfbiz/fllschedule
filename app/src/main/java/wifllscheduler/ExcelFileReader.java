@@ -17,6 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import wifllscheduler.ScheduleSlot.SlotType;
 
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
 // import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 // import org.apache.poi.ss.usermodel.DateUtil;
@@ -300,7 +301,7 @@ public class ExcelFileReader {
         XSSFRow rows[];
 
         rows = new XSSFRow[scheduleInfo.getTeamCount()+2];
-        for (int c = 0; c < teamCount+2; c++) {
+        for (int c = 0; c < teamCount+1; c++) {
             int teamRow = c + 1;
             rows[c]= sheet.createRow(c);
             if (c > 0) {
@@ -312,6 +313,10 @@ public class ExcelFileReader {
                 formulaEvaluator.evaluateFormulaCell(cell);
             }
         }
+
+        // add in the wild card team
+        rows[teamCount+1] = sheet.createRow(teamCount+1);
+        rows[teamCount+1].createCell(0).setCellValue("Wild Card");
         rows[0].createCell(0).setCellValue("Team");
         rows[0].createCell(1).setCellValue("Coach Meeting");
         rows[0].createCell(2).setCellValue("Judging Start");
@@ -324,8 +329,10 @@ public class ExcelFileReader {
         rows[0].createCell(9).setCellValue("Round 2 Table");
         rows[0].createCell(10).setCellValue("Round 3 Time");
         rows[0].createCell(11).setCellValue("Round 3 Table");
+
+        // Process the teams
         for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
-            for (int team = 0; team < teamCount + 1; team++) {
+            for (int team = 0; team < teamCount; team++) {
                 try {
                     // Create a row and put some cells in it. Rows are 0 based.
                     // Create a cell and put a value in it.
@@ -376,10 +383,105 @@ public class ExcelFileReader {
                 }
             }
         }
-        // Auto size the columnts
-        for (int c = 0; c <= 10; c++) {
+
+        // handle the wildcard team which can have multiple matches per round
+        String practiceMatchTimes = "";
+        String practiceMatchTables = "";
+        String comp1MatchTimes = "";
+        String comp1MatchTables = "";
+        String comp2MatchTimes = "";
+        String comp2MatchTables = "";
+        String comp3MatchTimes = "";
+        String comp3MatchTables = "";
+        CellStyle cellStyle = inputWorkbook.createCellStyle();
+        cellStyle.setWrapText(true);
+        
+        for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
+            int team = teamCount;
+            int row = team + 1;
+            try {
+                ScheduleSlot slot = scheduleInfo.getSlotInfo(t, team);
+                if (slot.isPracticeMatch()) {
+                    int matchLocation = slot.getTableIndex();
+                    if (practiceMatchTimes.length() > 0) {
+                        practiceMatchTimes = practiceMatchTimes + "\n" + slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        practiceMatchTables = practiceMatchTables + "\n" + matchColorTable.get(matchLocation);
+                    } else {
+                        practiceMatchTimes = slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        practiceMatchTables = matchColorTable.get(matchLocation);
+                    }
+                    XSSFCell cell = rows[row].createCell(4);
+                    XSSFCell cell2 = rows[row].createCell(5);
+                    cell.setCellValue(practiceMatchTimes);
+                    cell2.setCellValue(practiceMatchTables);
+
+                    // turn on word wrap
+                    cell.setCellStyle(cellStyle);
+                    cell2.setCellStyle(cellStyle);
+                } else if (slot.isMatch1()) {
+                    int matchLocation = slot.getTableIndex();
+                    if (comp1MatchTables.length() > 0) {
+                        comp1MatchTimes = comp1MatchTimes + "\n" + slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp1MatchTables = comp1MatchTables + "\n" + matchColorTable.get(matchLocation);
+                    } else {                        
+                        comp1MatchTimes = slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp1MatchTables = matchColorTable.get(matchLocation);
+                    }
+                    XSSFCell cell = rows[row].createCell(6);
+                    XSSFCell cell2 = rows[row].createCell(7);
+                    cell.setCellValue(comp1MatchTimes);
+                    cell2.setCellValue(comp1MatchTables);
+
+                    // turn on word wrap
+                    cell.setCellStyle(cellStyle);
+                    cell2.setCellStyle(cellStyle);
+                } else if (slot.isMatch2()) {
+                    int matchLocation = slot.getTableIndex();
+                    if (comp2MatchTimes.length() > 0) {                        
+                        comp2MatchTimes = comp2MatchTimes + "\n" + slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp2MatchTables = comp2MatchTables + "\n" + matchColorTable.get(matchLocation);
+                    } else {
+                        comp2MatchTimes = slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp2MatchTables = matchColorTable.get(matchLocation);
+                    }
+                    XSSFCell cell = rows[row].createCell(8);
+                    XSSFCell cell2 = rows[row].createCell(9);
+                    cell.setCellValue(comp2MatchTimes);
+                    cell2.setCellValue(comp2MatchTables);
+
+                    // turn on word wrap
+                    cell.setCellStyle(cellStyle);
+                    cell2.setCellStyle(cellStyle);
+                } else if (slot.isMatch3()) {
+                    int matchLocation = slot.getTableIndex();
+                    if (comp3MatchTimes.length() > 0) {
+                        comp3MatchTimes = comp3MatchTimes + "\n" + slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp3MatchTables = comp3MatchTables + "\n" + matchColorTable.get(matchLocation);
+                    } else {
+                        comp3MatchTimes = slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
+                        comp3MatchTables = matchColorTable.get(matchLocation);
+                    }
+                    XSSFCell cell = rows[row].createCell(10);
+                    XSSFCell cell2 = rows[row].createCell(11);
+                    cell.setCellValue(comp3MatchTimes);
+                    cell2.setCellValue(comp3MatchTables);                
+
+                    // turn on word wrap
+                    cell.setCellStyle(cellStyle);
+                    cell2.setCellStyle(cellStyle);
+                }
+            } catch (NullPointerException e){
+                // timeslot doesn't exist so stop processing
+                // t = timeSlots;
+                // team = teamCount;
+            }
+        }
+        // Auto size the columns
+        for (int c = 0; c <= rows[0].getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
         }
+        // Auto size the Wildcard team row
+        // rows[teamCount+1].setHeightInPoints(rows[teamCount+1].getHeightInPoints()*2);
     }
 
     public void createUpdatedWorkbook(String filename) {
