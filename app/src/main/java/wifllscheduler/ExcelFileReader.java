@@ -307,7 +307,7 @@ public class ExcelFileReader {
             if (c > 0) {
                 String formula;
                 XSSFCell cell = rows[c].createCell(0);
-                formula = "CONCAT(Team List!B" + teamRow + ", \" - \" , Team List!C" + teamRow + ")";
+                formula = "_xlfn.CONCAT(Team List!B" + teamRow + ", \" - \" , Team List!C" + teamRow + ")";
                 cell.setCellFormula(formula);
                 XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                 formulaEvaluator.evaluateFormulaCell(cell);
