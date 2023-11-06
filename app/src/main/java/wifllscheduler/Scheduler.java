@@ -2,7 +2,7 @@ package wifllscheduler;
 
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-
+import java.util.Date;
 import wifllscheduler.ScheduleSlot.SlotType;
 
 public class Scheduler {
@@ -35,6 +35,7 @@ public class Scheduler {
     private LocalTime judgingTimes[];
     private LocalTime judgingDuration = LocalTime.of(0,30);
     private LocalTime judgingMinimumDiscussionTime = LocalTime.of(0,15);
+    private Date tournamentDate = new Date();
 
     public Scheduler(int numberOfJudgingRooms, int numberOfJudgingTimes, int numberOfRobotGameTablePairs) {
         numJudgingRooms = numberOfJudgingRooms;
@@ -412,5 +413,13 @@ public class Scheduler {
                 break;
         }
         return location;
+    }
+
+    public Date getTournamentDate() {
+        return tournamentDate;
+    }
+
+    public void setTournamentDate(Date date) {
+        tournamentDate = date;
     }
 }

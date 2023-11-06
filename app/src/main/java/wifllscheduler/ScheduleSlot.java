@@ -209,4 +209,8 @@ public class ScheduleSlot {
 
         return delta;
     }
+
+    public LocalTime getEndTime() {
+        return end;
+    }
 }

@@ -7,6 +7,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Date;
+import java.time.LocalTime;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
@@ -18,6 +20,7 @@ import wifllscheduler.ScheduleSlot.SlotType;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CreationHelper;
 // import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 // import org.apache.poi.ss.usermodel.DateUtil;
@@ -105,6 +108,11 @@ public class ExcelFileReader {
             if (c != null) {
                 String cellValue = formatter.formatCellValue(c);
                 switch (cellValue) {
+                    case "Tournament Date":
+                        c = row.getCell(judgingHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        Date tournamentDate = c.getDateCellValue();
+                        scheduleData.setTournamentDate(tournamentDate);
+                        break;
                     case "Judging Panels":
                         c = row.getCell(judgingHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         int numJudgingRooms = Integer.parseInt(formatter.formatCellValue(c));
@@ -494,4 +502,123 @@ public class ExcelFileReader {
             System.exit(-1);
         }
     }
+
+    public void UpdateTournamentImportSheet(Schedule scheduleInfo, Scheduler schedulerInfo) {
+
+        String ret = "";
+        String sheetName = "_DONOTEDITFLLTournamentImport";
+        
+        // delete the schedule sheet and recreate it
+        int sheetIndex = inputWorkbook.getSheetIndex(sheetName);
+        inputWorkbook.removeSheetAt(sheetIndex);
+        XSSFSheet sheet = inputWorkbook.createSheet(sheetName);
+        // put the sheet back in the same position in the spreadsheet
+        inputWorkbook.setSheetOrder(sheetName, sheetIndex);
+
+        int teamCount = scheduleInfo.getTeamCount();
+        XSSFRow rows[];
+        /**
+         * One row for each item:
+         * 1 - header row
+         * Per team: 
+         * 1 - coaches meeting
+         * 1 - judging session
+         * 1 - practice round
+         * 3 - competition rounds
+         */
+        int rowCount = 1 + (1 + 1 + 1 + 3) * teamCount;
+        rows = new XSSFRow[rowCount+1];
+
+        for (int c = 0; c < rowCount; c++) {
+            rows[c]= sheet.createRow(c);
+        }
+
+        // put in the headers
+        rows[0].createCell(0).setCellValue("Date");
+        rows[0].createCell(1).setCellValue("Begin Time");
+        rows[0].createCell(2).setCellValue("End Time");
+        rows[0].createCell(3).setCellValue("Type");
+        rows[0].createCell(4).setCellValue("Round");
+        rows[0].createCell(5).setCellValue("Description");
+        rows[0].createCell(6).setCellValue("Room");
+        rows[0].createCell(7).setCellValue("Team #");
+        
+        int row = 1;
+        Date tournamentDate = schedulerInfo.getTournamentDate();
+        for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
+            for (int team = 0; team < teamCount; team++) {
+                try {
+                    ScheduleSlot slot = scheduleInfo.getSlotInfo(t, team);
+                    LocalTime startTime = slot.getStartTime();
+                    LocalTime endTime = slot.getEndTime();
+                    if (slot.isCoachMeetingSlot()) {
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "General", 0, "Coaches Meeting", "", team);
+                    } else if (slot.isJudgingSlot()) {
+                        int judgingLocation = slot.getJudgingIndex();
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Core", 1, "Judging Session", judingColorTable.get(judgingLocation), team);
+                    } else if (slot.isPracticeMatch()) {
+                        int matchLocation = slot.getTableIndex();
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Practice", 1, "Practice Round", matchColorTable.get(matchLocation), team);
+                    } else if (slot.isMatch1()) {
+                        int matchLocation = slot.getTableIndex();
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Table", 1, "Competition Match 1", matchColorTable.get(matchLocation), team);
+                    } else if (slot.isMatch2()) {
+                        int matchLocation = slot.getTableIndex();
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Table", 2, "Competition Match 2", matchColorTable.get(matchLocation), team);
+                    } else if (slot.isMatch3()) {
+                        int matchLocation = slot.getTableIndex();
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Table", 3, "Competition Match 3", matchColorTable.get(matchLocation), team);
+                    }
+                    row++;
+                } catch (NullPointerException e){
+                    // timeslot doesn't exist so stop processing
+                    // t = timeSlots;
+                    // team = teamCount;
+                }
+            }
+        }
+        // Auto size the columns
+        for (int c = 0; c <= rows[0].getLastCellNum(); c++) {
+            sheet.autoSizeColumn(c);
+        }
+    }
+    
+    private void InsertInventoryDataToRow(XSSFRow row, Date date, LocalTime startTime, LocalTime endTime, String type, int round, String description, String room, int teamNumber) {
+
+        XSSFCell dateCell = row.createCell(0);
+        XSSFCell startTimeCell = row.createCell(1);
+        XSSFCell endTimeCell = row.createCell(2);
+        XSSFCell typeCell = row.createCell(3);
+        XSSFCell roundCell = row.createCell(4);
+        XSSFCell descriptionCell = row.createCell(5);
+        XSSFCell roomCell = row.createCell(6);
+        XSSFCell teamNumberCell = row.createCell(7);
+
+        // Cell formatting
+        CreationHelper createHelper = inputWorkbook.getCreationHelper();  
+        CellStyle cellStyle = inputWorkbook.createCellStyle();
+        cellStyle.setDataFormat(createHelper.createDataFormat().getFormat("mm/dd/yyyy"));  
+
+        XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
+        String formula;
+        int teamRow = teamNumber + 2;
+
+        dateCell.setCellValue(date);
+        dateCell.setCellStyle(cellStyle);
+        startTimeCell.setCellValue(startTime.format(DateTimeFormatter.ofPattern("hh:mm a")));
+        endTimeCell.setCellValue(endTime.format(DateTimeFormatter.ofPattern("hh:mm a")));
+        typeCell.setCellValue(type);
+        if (round > 0) {
+            roundCell.setCellValue(round);
+        } else {
+            roundCell.setCellValue("");
+        }
+        descriptionCell.setCellValue(description);
+        roomCell.setCellValue(room);
+
+        formula = "_xlfn.CONCAT(Team List!B" + teamRow + ")";
+        teamNumberCell.setCellFormula(formula);
+        formulaEvaluator.evaluateFormulaCell(teamNumberCell);
+    }
+
 }
