@@ -92,19 +92,11 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
+        System.out.println("The first team not in judging is: " + roundStartTeam + " at roundStartTime of " + roundStartTime);
         matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME1);
-        // Up through the group that was in judging
-        roundEndTeam = roundStartTeam;
-        roundStartTime = schedulerInfo.getRound1MatchTime2();
-        if (roundStartTime.isBefore(matchEndTime)) {
-            roundStartTime = matchEndTime;
-        }
-        slot = scheduleSlot(roundStartTime);
-        roundStartTeam = 0;
-        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME2);
-
+        
         /**
-         * Schedule the competitions for Round2
+         * Schedule the first set competitions for Round2
          * 
          * Start the Round 2 with the team after the latest team not in judging and continue to the end of the list of teams,
          * then schedule the beginning of the list through the teams that are in judging at the later time.
@@ -116,22 +108,28 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
+        System.out.println("Processing Round 2 match time 1: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME1);
+    
         // Up through the group that was in judging
-        roundEndTeam = roundStartTeam;
-        roundStartTime = schedulerInfo.getRound2MatchTime2();
+        roundStartTime = schedulerInfo.getRound1MatchTime2();
+        slot = scheduleSlot(roundStartTime);
+        roundEndTeam = getLowestTeamPosInJudging(teamList, slot);
         if (roundStartTime.isBefore(matchEndTime)) {
             roundStartTime = matchEndTime;
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME2);
+        System.out.println("Processing Round 1 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
+        matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME2);
 
         /**
          * Schedule the competitions for Round3
          * 
          * Start the Round 3 with the team after the latest team not in judging and continue to the end of the list of teams,
-         * then schedule the beginning of the list through the teams that are in judging at the later time.
+         * then schedule the beginning of the list through the teams that are in judging at the later time. This is done before round 2
+         * judging is completed to prevent conflicts in judging times
+         * 
          */
         roundEndTeam = teamCount;
         roundStartTime = schedulerInfo.getRound3MatchTime1();
@@ -140,15 +138,39 @@ public class Schedule {
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = getHighestTeamPosInJudging(teamList, slot) + 1;
+        System.out.println("Processing Round 3 match time 1: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME1);
-        // Up through the group that was in judging
-        roundEndTeam = roundStartTeam;
-        roundStartTime = schedulerInfo.getRound3MatchTime2();
+        
+        /**
+         * Schedule Round 2 Up through the group that was in judging after the start of round 3 judging
+         * otherwise the round 3 won't get done in time for judging
+         */
+        // roundEndTeam = roundStartTeam;
+        roundStartTime = schedulerInfo.getRound2MatchTime2();
+        slot = scheduleSlot(roundStartTime);
+        roundEndTeam = getLowestTeamPosInJudging(teamList, slot);
         if (roundStartTime.isBefore(matchEndTime)) {
             roundStartTime = matchEndTime;
         }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
+        System.out.println("Processing Round 2 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
+        matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME2);
+
+        
+        /** 
+         * 
+         * Finish up the round 3 judging Up through the group that was in judging
+         */
+        roundStartTime = schedulerInfo.getRound3MatchTime2();
+        slot = scheduleSlot(roundStartTime);
+        roundEndTeam = getLowestTeamPosInJudging(teamList, slot);
+        if (roundStartTime.isBefore(matchEndTime)) {
+            roundStartTime = matchEndTime;
+        }
+        slot = scheduleSlot(roundStartTime);
+        roundStartTeam = 0;
+        System.out.println("Processing Round 3 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME2);
     }
 
@@ -223,6 +245,35 @@ public class Schedule {
         }
         return highTeamSLot;
     }
+
+    private int getLowestTeamPosInJudging(TeamList teamList, int slot) {
+        int lowestTeamSlot = 9999;
+        boolean found = false;
+
+        if (slot < 0) {
+            return -1;
+        }
+        for (int t = 0; t < teamList.getSize(); t++) {
+            try {                
+                if (schedule[slot][t].isJudgingSlot()) {
+                    if (t <= lowestTeamSlot) {
+                        lowestTeamSlot = t;
+                        found = true;
+                    }
+                }
+            } catch ( Exception e) {
+                // nothing scheduled at this slot
+            }
+        }
+
+        if (!found) {
+            System.out.println("Couldn't find a team in judging");
+            return teamList.getSize();
+        }
+        System.out.println("Found a team in judging " + lowestTeamSlot);
+        return lowestTeamSlot;
+    }
+
 
     private LocalTime setPracticeSchedule(TeamList teamList, LocalTime matchTime, int matchDuration, int roundStartTeam, int roundEndTeam, int gameTablePairs, ScheduleSlot.SlotType slotType) {
         LocalTime blockStartTime = matchTime;
