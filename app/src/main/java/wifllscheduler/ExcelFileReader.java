@@ -526,7 +526,7 @@ public class ExcelFileReader {
          * 1 - practice round
          * 3 - competition rounds
          */
-        int rowCount = 1 + (1 + 1 + 1 + 3) * teamCount;
+        int rowCount = 1 + (1 + 1 + 1 + 3 + 1) * teamCount;
         rows = new XSSFRow[rowCount+1];
 
         for (int c = 0; c < rowCount; c++) {
@@ -554,8 +554,13 @@ public class ExcelFileReader {
                     if (slot.isCoachMeetingSlot()) {
                         InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "General", 0, "Coaches Meeting", "", team);
                     } else if (slot.isJudgingSlot()) {
-                        int judgingLocation = slot.getJudgingIndex();
-                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Core", 1, "Judging Session", judingColorTable.get(judgingLocation), team);
+                        int judgingSlotForTime = scheduleInfo.scheduleSlot(startTime);
+                        if (judgingSlotForTime == t) {
+                            int judgingLocation = slot.getJudgingIndex();
+                            InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Core", 1, "Judging Session", judingColorTable.get(judgingLocation), team);
+                        } else {
+                            row--;
+                        }
                     } else if (slot.isPracticeMatch()) {
                         int matchLocation = slot.getTableIndex();
                         InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "Practice", 1, "Practice Round", matchColorTable.get(matchLocation), team);

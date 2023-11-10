@@ -205,7 +205,7 @@ public class Schedule {
         return newTime;
     }
 
-    private int scheduleSlot(LocalTime t) {
+    public int scheduleSlot(LocalTime t) {
         int minutes = (t.getHour() * 60 + t.getMinute()) - (dayStartTime.getHour() * 60 + dayStartTime.getMinute());
 
         return (int) Math.floorDiv(minutes, scheduleMinutes);
