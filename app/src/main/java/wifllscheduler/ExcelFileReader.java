@@ -225,6 +225,11 @@ public class ExcelFileReader {
                         scheduleData.setPracticeMatchTime1(time);
                         scheduleData.setCellLocation(SlotType.PRACTICE_MATCH_TIME1, "TournamentSetup!F" + rn);
                         break;
+                    case "Practice round team offset":
+                        c = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        int practiceTeamOffset = Integer.parseInt(formatter.formatCellValue(c));
+                        scheduleData.setPracticeTeamOffset(practiceTeamOffset);
+                        break;
                     case "Practice round start time 2":
                         timeCell = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         time = formatter.formatCellValue(timeCell);
@@ -236,6 +241,11 @@ public class ExcelFileReader {
                         time = formatter.formatCellValue(timeCell);
                         scheduleData.setRound1MatchTime1(time);
                         scheduleData.setCellLocation(SlotType.COMPETITION_MATCH1_TIME1, "TournamentSetup!F" + rn);
+                        break;
+                    case "Round 1 team offset":
+                        c = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        int round1TeamOffset = Integer.parseInt(formatter.formatCellValue(c));
+                        scheduleData.setRound1TeamOffset(round1TeamOffset);
                         break;
                     case "Round 1 start time 2":
                         timeCell = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -249,6 +259,11 @@ public class ExcelFileReader {
                         scheduleData.setRound2MatchTime1(time);
                         scheduleData.setCellLocation(SlotType.COMPETITION_MATCH2_TIME1, "TournamentSetup!F" + rn);
                         break;
+                    case "Round 2 team offset":
+                        c = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        int round2TeamOffset = Integer.parseInt(formatter.formatCellValue(c));
+                        scheduleData.setRound2TeamOffset(round2TeamOffset);
+                        break;
                     case "Round 2 start time 2":
                         timeCell = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         time = formatter.formatCellValue(timeCell);
@@ -260,6 +275,11 @@ public class ExcelFileReader {
                         time = formatter.formatCellValue(timeCell);
                         scheduleData.setRound3MatchTime1(time);
                         scheduleData.setCellLocation(SlotType.COMPETITION_MATCH3_TIME1, "TournamentSetup!F" + rn);
+                        break;
+                    case "Round 3 team offset":
+                        c = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                        int round3TeamOffset = Integer.parseInt(formatter.formatCellValue(c));
+                        scheduleData.setRound3TeamOffset(round3TeamOffset);
                         break;
                     case "Round 3 start time 2":
                         timeCell = row.getCell(matchHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);

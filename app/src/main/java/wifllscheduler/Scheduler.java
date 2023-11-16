@@ -18,6 +18,10 @@ public class Scheduler {
     private LocalTime practiceMatchTime2;
     private String practiceMatchTime2CellLoc;
     private LocalTime round1MatchTime1;
+    private int practiceTeamOffset;
+    private int round1TeamOffset;
+    private int round2TeamOffset;
+    private int round3TeamOffset;
     private String round1MatchTime1CellLoc;
     private LocalTime round1MatchTime2;
     private String round1MatchTime2CellLoc;
@@ -437,5 +441,41 @@ public class Scheduler {
             }
         }
         return "";
+    }
+
+    public int getPracticeTeamOffset() {
+        return practiceTeamOffset;
+    }
+
+    public void setPracticeTeamOffset(int offset) {
+        System.out.println("practiceOffset: " + offset);
+        practiceTeamOffset = offset;
+    }
+    
+    public int getRound1TeamOffset() {
+        return round1TeamOffset;
+    }
+
+    public void setRound1TeamOffset(int offset) {
+        System.out.println("round1Offset: " + offset);
+        round1TeamOffset = offset;
+    }
+    
+    public int getRound2TeamOffset() {
+        return round2TeamOffset;
+    }
+    
+    public void setRound2TeamOffset(int offset) {
+        System.out.println("round2Offset: " + offset);
+        round2TeamOffset = offset;
+    }
+    
+    public int getRound3TeamOffset() {
+        return round3TeamOffset;
+    }
+    
+    public void setRound3TeamOffset(int offset) {
+        System.out.println("round3Offset: " + offset);
+        round3TeamOffset = offset;
     }
 }
