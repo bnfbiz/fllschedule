@@ -155,7 +155,7 @@ public class ExcelFileReader {
                             // Process the judging times
                             timeCell = row.getCell(judgingHeaderColumn + 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             String judgingTime = formatter.formatCellValue(timeCell);
-                            scheduleData.addJudgingTime(judgingTime);
+                            scheduleData.addJudgingTime(judgingTime, "TournamentSetup!C" + rn);
                         }
                         break;
 
@@ -292,7 +292,7 @@ public class ExcelFileReader {
         return scheduleData;
     }
 
-    public void updateScheduleTab(Schedule scheduleInfo) {
+    public void updateScheduleTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
 
         String ret = "";
         
@@ -355,6 +355,7 @@ public class ExcelFileReader {
                         // cell.setCellValue(scheduleInfo.getTimeForSlot(t).format(DateTimeFormatter.ofPattern("hh:mm a")));
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                         XSSFCell cell2 = rows[row].createCell(3);
+                        // cell.setCellValue(schedulerInfo.getJudgingTimeCellLocation(slot.getStartTime()));
                         int judgingLocation = slot.getJudgingIndex();
                         cell2.setCellValue(judingColorTable.get(judgingLocation));
                     } else if (slot.isPracticeMatch()) {
@@ -626,4 +627,35 @@ public class ExcelFileReader {
         formulaEvaluator.evaluateFormulaCell(teamNumberCell);
     }
 
+    public void UpdateMatchQueueingTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
+
+        String ret = "";
+        String sheetName = "MatchQueueing";
+        
+        // delete the match queueing sheet and recreate it
+        int sheetIndex = inputWorkbook.getSheetIndex(sheetName);
+        if (sheetIndex >= 0) {
+            inputWorkbook.removeSheetAt(sheetIndex);
+        }
+        XSSFSheet sheet = inputWorkbook.createSheet(sheetName);
+        // put the sheet back in the same position in the spreadsheet
+        if (sheetIndex >= 0) {
+            inputWorkbook.setSheetOrder(sheetName, sheetIndex);
+        }
+
+        int teamCount = scheduleInfo.getTeamCount();
+        int row = 0;
+        XSSFRow headerRow = sheet.createRow(row++);
+
+        // put in the headers
+        headerRow.createCell(0).setCellValue("Table");
+        headerRow.createCell(1).setCellValue("Round");
+        headerRow.createCell(2).setCellValue("Match Start");
+        headerRow.createCell(3).setCellValue("Team #");
+        for (int c = 0; c < 10; c++) {
+            XSSFRow dataRow = sheet.createRow(row);
+            dataRow.createCell(0).setCellValue("Some color " + c);
+            row++;
+        }
+    }
 }

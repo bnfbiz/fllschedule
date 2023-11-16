@@ -33,6 +33,7 @@ public class Scheduler {
     private LocalTime minTimeBetweenActivities;
     private LocalTime lunchTime;
     private LocalTime judgingTimes[];
+    private String judgingTimesCellLoc[];
     private LocalTime judgingDuration = LocalTime.of(0,30);
     private LocalTime judgingMinimumDiscussionTime = LocalTime.of(0,15);
     private Date tournamentDate = new Date();
@@ -41,6 +42,7 @@ public class Scheduler {
         numJudgingRooms = numberOfJudgingRooms;
         numRobotGameTablePairs = numberOfRobotGameTablePairs;
         judgingTimes = new LocalTime[numberOfJudgingTimes];
+        judgingTimesCellLoc = new String[numberOfJudgingTimes];
     }
 
     public Scheduler() {
@@ -53,28 +55,33 @@ public class Scheduler {
             + ", lunchtime " + lunchTime + ", JudgingLength " + judgingDuration + " + " + judgingMinimumDiscussionTime;
     }
 
-    public void addJudgingTime(int hour, int minute) {
+    public void addJudgingTime(int hour, int minute, String cellLocation) {
         for (int c = 0; c < judgingTimes.length; c++) {
             if (judgingTimes[c] == null) {
                 judgingTimes[c] = LocalTime.of(hour,  minute);
+                judgingTimesCellLoc[c] = cellLocation;
+                System.out.println("Got judging time location of " + judgingTimesCellLoc[c]);
                 c = judgingTimes.length;
             }
         }
     }
     
-    public void addJudgingTime(String time) {
+    public void addJudgingTime(String time, String cellLocation) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("h:m a");
 
         for (int c = 0; c < judgingTimes.length; c++) {
             if (judgingTimes[c] == null) {
                 judgingTimes[c] = LocalTime.parse(time, formatter);
+                judgingTimesCellLoc[c] = cellLocation;
+                System.out.println("Got judging time location of " + judgingTimesCellLoc[c]);
                 c = judgingTimes.length;
             }
         }
     }
 
     public void setNumberOfJudgingTimes(int numberOfJudgingTimes) {
-       judgingTimes = new LocalTime[numberOfJudgingTimes];
+        judgingTimes = new LocalTime[numberOfJudgingTimes];
+        judgingTimesCellLoc = new String[numberOfJudgingTimes];
     }
 
     public int getNumberOfJudgingTimes() {
@@ -421,5 +428,14 @@ public class Scheduler {
 
     public void setTournamentDate(Date date) {
         tournamentDate = date;
+    }
+
+    public String getJudgingTimeCellLocation(LocalTime time) {
+        for (int c = 0; c < judgingTimes.length; c++) {
+            if (judgingTimes[c].equals(time)) {
+                return judgingTimesCellLoc[c];
+            }
+        }
+        return "";
     }
 }

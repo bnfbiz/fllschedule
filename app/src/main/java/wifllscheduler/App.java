@@ -67,8 +67,9 @@ public class App {
         // Schedule the judging times
         schedule = new Schedule(scheduler, teams);
         // System.out.println(schedule);
-        excelFile.updateScheduleTab(schedule);
+        excelFile.updateScheduleTab(schedule, scheduler);
         excelFile.UpdateTournamentImportSheet(schedule, scheduler);
+        // excelFile.UpdateMatchQueueingTab(schedule, scheduler);
         System.out.println("Processing out put file " + outputFilename);
         excelFile.createUpdatedWorkbook(outputFilename);
     }
