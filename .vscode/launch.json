@@ -32,10 +32,22 @@
             "args": "--inputFile 23Team4JudgingRooms.xlsx -o 2023-23Team4JudgingRooms.xlsx"
         },{
             "type": "java",
+            "name": "25 teams 5 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 25Team5JudgingRooms.xlsx -o 2023-25Team5JudgingRooms.xlsx"
+        },{
+            "type": "java",
             "name": "29 teams 5 judging panels",
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 29Team5JudgingRooms.xlsx -o 2023-29Team5JudgingRooms.xlsx"
+        },{
+                "type": "java",
+                "name": "30 teams 5 judging panels",
+                "request": "launch",
+                "mainClass": "",
+                "args": "--inputFile 30Team5JudgingRooms.xlsx -o 2023-30Team5JudgingRooms.xlsx"
         },{
             "type": "java",
             "name": "36 teams 6 judging panels",

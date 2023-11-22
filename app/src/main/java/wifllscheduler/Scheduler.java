@@ -9,6 +9,7 @@ public class Scheduler {
     private int numJudgingRooms;
     private int numRobotGameTablePairs;
     private LocalTime dayStartTime;
+    private String dayStartTimeCellLoc;
     private LocalTime coachMeetingTime1;
     private String coachMeetingTime1CellLoc;
     private LocalTime coachMeetingTime2;
@@ -151,7 +152,6 @@ public class Scheduler {
 
         practiceMatchTime1 = LocalTime.parse(time, formatter);
     }
-    
     
     public LocalTime getPracticeMatchTime2() {
         return practiceMatchTime2;
@@ -430,8 +430,13 @@ public class Scheduler {
         return tournamentDate;
     }
 
-    public void setTournamentDate(Date date) {
+    public void setTournamentDate(Date date, String cellLocation) {
         tournamentDate = date;
+        dayStartTimeCellLoc = cellLocation;
+    }
+
+    public String getTournamentDateCellLoc() {
+        return dayStartTimeCellLoc;
     }
 
     public String getJudgingTimeCellLocation(LocalTime time) {

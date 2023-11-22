@@ -186,6 +186,13 @@ public class ScheduleSlot {
     public boolean isMatch3() {
         return type == SlotType.COMPETITION_MATCH3_TIME1 || type == SlotType.COMPETITION_MATCH3_TIME2;
     }
+
+    public boolean isRobotMatch() {
+        return type == SlotType.PRACTICE_MATCH_TIME1 || type == SlotType.PRACTICE_MATCH_TIME2
+            || type == SlotType.COMPETITION_MATCH1_TIME1 || type == SlotType.COMPETITION_MATCH1_TIME2
+            || type == SlotType.COMPETITION_MATCH2_TIME1 || type == SlotType.COMPETITION_MATCH2_TIME2
+            || type == SlotType.COMPETITION_MATCH3_TIME1 || type == SlotType.COMPETITION_MATCH3_TIME2;
+    }
     
     public int getTeamNumber() {
         return teamNumber;
