@@ -65,7 +65,6 @@ public class Scheduler {
             if (judgingTimes[c] == null) {
                 judgingTimes[c] = LocalTime.of(hour,  minute);
                 judgingTimesCellLoc[c] = cellLocation;
-                System.out.println("Got judging time location of " + judgingTimesCellLoc[c]);
                 c = judgingTimes.length;
             }
         }
@@ -78,7 +77,6 @@ public class Scheduler {
             if (judgingTimes[c] == null) {
                 judgingTimes[c] = LocalTime.parse(time, formatter);
                 judgingTimesCellLoc[c] = cellLocation;
-                System.out.println("Got judging time location of " + judgingTimesCellLoc[c]);
                 c = judgingTimes.length;
             }
         }
@@ -462,7 +460,6 @@ public class Scheduler {
     }
 
     public void setRound1TeamOffset(int offset) {
-        System.out.println("round1Offset: " + offset);
         round1TeamOffset = offset;
     }
     
@@ -471,7 +468,6 @@ public class Scheduler {
     }
     
     public void setRound2TeamOffset(int offset) {
-        System.out.println("round2Offset: " + offset);
         round2TeamOffset = offset;
     }
     
@@ -480,7 +476,6 @@ public class Scheduler {
     }
     
     public void setRound3TeamOffset(int offset) {
-        System.out.println("round3Offset: " + offset);
         round3TeamOffset = offset;
     }
 }

@@ -69,7 +69,9 @@ public class App {
         // System.out.println(schedule);
         excelFile.updateScheduleTab(schedule, scheduler);
         excelFile.UpdateTournamentImportSheet(schedule, scheduler);
+        excelFile.UpdateJudgingQueueingTab(schedule, scheduler);
         excelFile.UpdateMatchQueueingTab(schedule, scheduler);
+        excelFile.UpdateEmceeTab(schedule, scheduler);
         System.out.println("Processing out put file " + outputFilename);
         excelFile.createUpdatedWorkbook(outputFilename);
     }

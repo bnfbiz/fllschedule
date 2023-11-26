@@ -75,7 +75,6 @@ public class Schedule {
         LocalTime roundStartTime = schedulerInfo.getPracticeMatchTime1();
         LocalTime matchEndTime = setPracticeSchedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.PRACTICE_MATCH_TIME1);
         int practiceTime2EndTeam = roundStartTeam;
-        System.out.println("Practice: roundStartTeam: " + roundStartTeam + " roundEndTeam: " + roundEndTeam + " Practice1 start time: " + roundStartTime);
 
         // The group that was in judging
         roundStartTeam = 0;     
@@ -98,7 +97,6 @@ public class Schedule {
         roundStartTeam = schedulerInfo.getRound1TeamOffset();
         matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME1);
         int round1Time2EndTeam = roundStartTeam;
-        System.out.println("Round1: roundStartTeam: " + roundStartTeam + " roundEndTeam: " + roundEndTeam + " Practice1 start time: " + roundStartTime);
 
         /**
          * Schedule the first set competitions for Round2
@@ -113,10 +111,8 @@ public class Schedule {
         // }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = schedulerInfo.getRound2TeamOffset();
-        System.out.println("Processing Round 2 match time 1: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME1);
         int round2Time2EndTeam = roundStartTeam;
-        System.out.println("Round2: roundStartTeam: " + roundStartTeam + " roundEndTeam: " + roundEndTeam + " Practice1 start time: " + roundStartTime);
 
         // Up through the group that was in judging
         roundStartTime = schedulerInfo.getRound1MatchTime2();
@@ -127,7 +123,6 @@ public class Schedule {
         // }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Processing Round 1 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound1Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH1_TIME2);
 
         /**
@@ -145,10 +140,8 @@ public class Schedule {
         // }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = schedulerInfo.getRound3TeamOffset();
-        System.out.println("Processing Round 3 match time 1: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME1);
         int round3Time2EndTeam = roundStartTeam;
-        System.out.println("Round3: roundStartTeam: " + roundStartTeam + " roundEndTeam: " + roundEndTeam + " Practice1 start time: " + roundStartTime);
 
         /**
          * Schedule Round 2 Up through the group that was in judging after the start of round 3 judging
@@ -164,7 +157,6 @@ public class Schedule {
         // }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Processing Round 2 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound2Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH2_TIME2);
 
         
@@ -180,7 +172,6 @@ public class Schedule {
         // }
         slot = scheduleSlot(roundStartTime);
         roundStartTeam = 0;
-        System.out.println("Processing Round 3 match time 2: roundStartTeam: " +  roundStartTeam + " at roundStartTime: " + roundStartTime + " with a roundEndTeam of " + roundEndTeam);
         matchEndTime = setRound3Schedule(teamList, roundStartTime, matchDuration, roundStartTeam, roundEndTeam, gameTablePairs, SlotType.COMPETITION_MATCH3_TIME2);
     }
 
@@ -292,7 +283,6 @@ public class Schedule {
             int wildcardTeamCount = 0;
             if (t + (gameTablePairs * 2) > roundEndTeam) {
                 wildcardTeamCount = (t + (gameTablePairs * 2) - roundEndTeam);
-                System.out.println("The wildcardTeamCount is " + wildcardTeamCount + " for matchTIme " + matchTime);
             }
             int slot = scheduleSlot(matchTime);
             Team team1;

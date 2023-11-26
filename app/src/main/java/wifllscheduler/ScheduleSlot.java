@@ -2,7 +2,7 @@ package wifllscheduler;
 
 import java.time.LocalTime;
 
-public class ScheduleSlot {
+public class ScheduleSlot implements Comparable<ScheduleSlot> {
     private Integer teamNumber;
     private LocalTime start;
     private LocalTime end;
@@ -62,6 +62,30 @@ public class ScheduleSlot {
 
     public String toString() {
         return "Slot for team " + teamNumber + " is of type " + type + " it is in " + location + " with a start Time: " + start + " ends at " + end + " startng " + offsetTime + " in the block start time of " + blockStart;
+    }
+
+    /**
+     * compareTo
+     * This method will sorty by time but if the times are equal it will sorty by location 
+     * to sort it so that all of the tables presented in the correct order
+     * 
+     * @param otherSlot
+     * @return
+     */
+    @Override
+    public int compareTo(ScheduleSlot otherSlot) {
+        if (start.isBefore(otherSlot.getStartTime())) {
+            return -1;
+        } else if (start.isAfter(otherSlot.getStartTime())) {
+            return 1;
+        } else {
+            if (getTableIndex() < otherSlot.getTableIndex()) {
+                return -1;
+            } else if (getTableIndex() > otherSlot.getTableIndex()) {
+                return 1;
+            }
+        }
+        return 0;
     }
 
     public static Location getJudgingLocation(int n) {
