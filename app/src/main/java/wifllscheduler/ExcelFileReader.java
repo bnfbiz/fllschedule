@@ -29,6 +29,7 @@ import org.apache.poi.hpsf.Array;
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFFont;
 import org.apache.poi.ss.format.CellFormatType;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -45,6 +46,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.ss.util.RegionUtil;
 
 // Handle Excel Files
 public class ExcelFileReader {
@@ -332,6 +334,19 @@ public class ExcelFileReader {
     }
 
     public void updateScheduleTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
+        final int teamNumberCol = 0;
+        final int teamNameCol = 1;
+        final int coachesMeetingTimeCol = 2;
+        final int judgingTimeCol = 3;
+        final int judgingRoomCol = 4;
+        final int practiceTimeCol = 5;
+        final int practiceTableCol = 6;
+        final int comp1TimeCol = 7;
+        final int comp1TableCol = 8;
+        final int comp2TimeCol = 9;
+        final int comp2TableCol = 10;
+        final int comp3TimeCol = 11;
+        final int comp3TableCol = 12;
 
         String ret = "";
         
@@ -367,33 +382,40 @@ public class ExcelFileReader {
             int teamRow = c + 1;
             rows[c]= sheet.createRow(c);
             if (c > 0) {
-                XSSFCell cell = rows[c].createCell(0);
-                formula = "_xlfn.CONCAT(Team List!B" + teamRow + ", \" - \" , Team List!C" + teamRow + ")";
+                // team number
+                XSSFCell cell = rows[c].createCell(teamNumberCol);
+                formula = "_xlfn.CONCAT(Team List!B" + teamRow + ")";
                 cell.setCellFormula(formula);
                 XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
+                formulaEvaluator.evaluateFormulaCell(cell);
+
+                // team name
+                cell = rows[c].createCell(teamNameCol);
+                formula = "_xlfn.CONCAT(Team List!C" + teamRow + ")";
+                cell.setCellFormula(formula);
+                formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                 formulaEvaluator.evaluateFormulaCell(cell);
             }
         }
         
-        // add in the wild card team
+        // add in the wild card match rows
         rows[teamCount+1] = sheet.createRow(teamCount+1);
-        rows[teamCount+1].createCell(0).setCellValue("Wild Card");
+        rows[teamCount+1].createCell(teamNameCol).setCellValue("Wild Card");
         rows[teamCount+2] = sheet.createRow(teamCount+2);
-        rows[teamCount+2].createCell(0).setCellValue("Wild Card");
         rows[teamCount+3] = sheet.createRow(teamCount+3);
-        rows[teamCount+3].createCell(0).setCellValue("Wild Card");
-        rows[0].createCell(0).setCellValue("Team");
-        rows[0].createCell(1).setCellValue("Coach Meeting");
-        rows[0].createCell(2).setCellValue("Judging Start");
-        rows[0].createCell(3).setCellValue("Judging Color");
-        rows[0].createCell(4).setCellValue("Practice Time");
-        rows[0].createCell(5).setCellValue("Practice Table");
-        rows[0].createCell(6).setCellValue("Round 1 Time");
-        rows[0].createCell(7).setCellValue("Round 1 Table");
-        rows[0].createCell(8).setCellValue("Round 2 Time");
-        rows[0].createCell(9).setCellValue("Round 2 Table");
-        rows[0].createCell(10).setCellValue("Round 3 Time");
-        rows[0].createCell(11).setCellValue("Round 3 Table");        
+        rows[0].createCell(teamNumberCol).setCellValue("Team #");
+        rows[0].createCell(teamNameCol).setCellValue("Team Name");
+        rows[0].createCell(coachesMeetingTimeCol).setCellValue("Coach Meeting");
+        rows[0].createCell(judgingTimeCol).setCellValue("Judging Start");
+        rows[0].createCell(judgingRoomCol).setCellValue("Judging Color");
+        rows[0].createCell(practiceTimeCol).setCellValue("Practice Time");
+        rows[0].createCell(practiceTableCol).setCellValue("Practice Table");
+        rows[0].createCell(comp1TimeCol).setCellValue("Round 1 Time");
+        rows[0].createCell(comp1TableCol).setCellValue("Round 1 Table");
+        rows[0].createCell(comp2TimeCol).setCellValue("Round 2 Time");
+        rows[0].createCell(comp2TableCol).setCellValue("Round 2 Table");
+        rows[0].createCell(comp3TimeCol).setCellValue("Round 3 Time");
+        rows[0].createCell(comp3TableCol).setCellValue("Round 3 Table");        
 
         /**
          * Setup gray scale line formatting
@@ -412,13 +434,13 @@ public class ExcelFileReader {
                     int row = team + 1;
 
                     if (slot.isCoachMeetingSlot()) {
-                        XSSFCell cell = rows[row].createCell(1);
+                        XSSFCell cell = rows[row].createCell(coachesMeetingTimeCol);
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                     } else if (slot.isJudgingSlot()) {
-                        XSSFCell cell = rows[row].createCell(2);
+                        XSSFCell cell = rows[row].createCell(judgingTimeCol);
                         // cell.setCellValue(scheduleInfo.getTimeForSlot(t).format(DateTimeFormatter.ofPattern("hh:mm a")));
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
-                        XSSFCell cell2 = rows[row].createCell(3);
+                        XSSFCell cell2 = rows[row].createCell(judgingRoomCol);
                         // cell.setCellValue(schedulerInfo.getJudgingTimeCellLocation(slot.getStartTime()));
                         int judgingLocation = slot.getJudgingIndex();
                         formula = "_xlfn.CONCAT(" + judingColorTable.get(judgingLocation) + ")";
@@ -426,40 +448,40 @@ public class ExcelFileReader {
                         XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                         formulaEvaluator.evaluateFormulaCell(cell2);
                     } else if (slot.isPracticeMatch()) {
-                        XSSFCell cell = rows[row].createCell(4);
+                        XSSFCell cell = rows[row].createCell(practiceTimeCol);
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
 
-                        XSSFCell cell2 = rows[row].createCell(5);
+                        XSSFCell cell2 = rows[row].createCell(practiceTableCol);
                         int matchLocation = slot.getTableIndex();
                         formula = "_xlfn.CONCAT( " + matchColorTable.get(matchLocation) + ")";
                         cell2.setCellFormula(formula);
                         XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                         formulaEvaluator.evaluateFormulaCell(cell2);
                     } else if (slot.isMatch1()) {
-                        XSSFCell cell = rows[row].createCell(6);
+                        XSSFCell cell = rows[row].createCell(comp1TimeCol);
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
 
-                        XSSFCell cell2 = rows[row].createCell(7);
+                        XSSFCell cell2 = rows[row].createCell(comp1TableCol);
                         int matchLocation = slot.getTableIndex();
                         formula = "_xlfn.CONCAT( " + matchColorTable.get(matchLocation) + ")";
                         cell2.setCellFormula(formula);
                         XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                         formulaEvaluator.evaluateFormulaCell(cell2);
                     } else if (slot.isMatch2()) {
-                        XSSFCell cell = rows[row].createCell(8);
+                        XSSFCell cell = rows[row].createCell(comp2TimeCol);
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                         
-                        XSSFCell cell2 = rows[row].createCell(9);
+                        XSSFCell cell2 = rows[row].createCell(comp2TableCol);
                         int matchLocation = slot.getTableIndex();
                         formula = "_xlfn.CONCAT( " + matchColorTable.get(matchLocation) + ")";
                         cell2.setCellFormula(formula);
                         XSSFFormulaEvaluator formulaEvaluator = inputWorkbook.getCreationHelper().createFormulaEvaluator();
                         formulaEvaluator.evaluateFormulaCell(cell2);
                     } else if (slot.isMatch3()) {
-                        XSSFCell cell = rows[row].createCell(10);
+                        XSSFCell cell = rows[row].createCell(comp3TimeCol);
                         cell.setCellValue(slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a")));
                         
-                        XSSFCell cell2 = rows[row].createCell(11);
+                        XSSFCell cell2 = rows[row].createCell(comp3TableCol);
                         int matchLocation = slot.getTableIndex();
                         formula = "_xlfn.CONCAT( " + matchColorTable.get(matchLocation) + ")";
                         cell2.setCellFormula(formula);
@@ -503,20 +525,20 @@ public class ExcelFileReader {
                     matchTime = slot.getStartTime().format(DateTimeFormatter.ofPattern("hh:mm a"));
                     matchTable = matchColorTable.get(matchLocation);
                     if (slot.isPracticeMatch()) {
-                        cell = rows[row + wildcardPraticeMatches].createCell(4);
-                        cell2 = rows[row + wildcardPraticeMatches].createCell(5);
+                        cell = rows[row + wildcardPraticeMatches].createCell(practiceTimeCol);
+                        cell2 = rows[row + wildcardPraticeMatches].createCell(practiceTableCol);
                         wildcardPraticeMatches++;
                     } else if (slot.isMatch1()) {
-                        cell = rows[row + wildcardRound1Matches].createCell(6);
-                        cell2 = rows[row + wildcardRound1Matches].createCell(7);
+                        cell = rows[row + wildcardRound1Matches].createCell(comp1TimeCol);
+                        cell2 = rows[row + wildcardRound1Matches].createCell(comp1TableCol);
                         wildcardRound1Matches++;
                     } else if (slot.isMatch2()) {
-                        cell = rows[row + wildcardRound2Matches].createCell(8);
-                        cell2 = rows[row + wildcardRound2Matches].createCell(9);
+                        cell = rows[row + wildcardRound2Matches].createCell(comp2TimeCol);
+                        cell2 = rows[row + wildcardRound2Matches].createCell(comp2TableCol);
                         wildcardRound2Matches++;
                     } else if (slot.isMatch3()) {
-                        cell = rows[row + wildcardRound3Matches].createCell(10);
-                        cell2 = rows[row + wildcardRound3Matches].createCell(11);
+                        cell = rows[row + wildcardRound3Matches].createCell(comp3TimeCol);
+                        cell2 = rows[row + wildcardRound3Matches].createCell(comp3TableCol);
                         wildcardRound3Matches++;
                     }
                     cell.setCellValue(matchTime);
@@ -533,21 +555,45 @@ public class ExcelFileReader {
             }
         }
         // setup printing
-        sheet.setPrintGridlines(true);
-        // Set column width (50 characters * character unit size of 1/256)
-        sheet.setColumnWidth(0, 50*256);
-        rows[0].getCell(0).setCellStyle(my_style);
+        sheet.setPrintGridlines(false);
         
         // Auto size the columns
-        for (int c = 1; c < rows[0].getLastCellNum(); c++) {
+        for (int c = 0; c < rows[0].getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
             rows[0].getCell(c).setCellStyle(my_style);
         }
+        // Set column width (50 characters * character unit size of 1/256)
+        sheet.setColumnWidth(1, 50*256);
+        rows[0].getCell(teamNameCol).setCellStyle(my_style);
+
+        /**
+        * set the border lines to delineate judging and matching to make
+        * it easier to read.
+        */
+        // coaches meeting
+        CellRangeAddress region = new CellRangeAddress(0, teamCount, coachesMeetingTimeCol, coachesMeetingTimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+        // judging
+        region = new CellRangeAddress(0, teamCount, judgingTimeCol, judgingTimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+        // practice round
+        region = new CellRangeAddress(0, teamCount, practiceTimeCol, practiceTimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+        // comp round 1
+        region = new CellRangeAddress(0, teamCount, comp1TimeCol, comp1TimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+        // comp round 2
+        region = new CellRangeAddress(0, teamCount, comp2TimeCol, comp2TimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+        // comp round 3
+        region = new CellRangeAddress(0, teamCount, comp3TimeCol, comp3TimeCol);
+        RegionUtil.setBorderLeft(BorderStyle.MEDIUM, region, sheet);
+
         sheet.setColumnBreak(rows[0].getLastCellNum() - 1);
         XSSFPrintSetup pageSetup = sheet.getPrintSetup();
         sheet.setFitToPage(true);
         // sheet.setAutobreaks(true);
-        inputWorkbook.setPrintArea(sheetIndex, "$A$1:$L$" + rows.length);
+        inputWorkbook.setPrintArea(sheetIndex, "$A$1:$M$" + rows.length);
         pageSetup.setFitHeight((short)1);
         pageSetup.setFitWidth((short)1);
         pageSetup.setPaperSize(PaperSize.LEGAL_PAPER);
@@ -700,7 +746,11 @@ public class ExcelFileReader {
     }
 
     public void UpdateMatchQueueingTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
-
+        final int teamNumberCol = 0;
+        final int teamNameCol = 1;
+        final int roundCol = 2;
+        final int matchStartCol = 3;
+        final int tableCol = 4;
         String ret = "";
         String sheetName = "MatchQueueing";
         
@@ -731,24 +781,27 @@ public class ExcelFileReader {
         /* At this stage, we have a bold style created which we can attach to a cell */
         
         // setup title row
-        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:D1"));
-        titleRow.createCell(0).setCellValue("Per Table Match Schedule");
+        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:E1"));
+        titleRow.createCell(teamNumberCol).setCellValue("Per Table Match Schedule");
         my_style.setAlignment(HorizontalAlignment.CENTER);
-        titleRow.getCell(0).setCellStyle(my_style);
-        titleRow.createCell(1).setCellStyle(my_style);
-        titleRow.createCell(2).setCellStyle(my_style);
-        titleRow.createCell(3).setCellStyle(my_style);
+        titleRow.getCell(teamNumberCol).setCellStyle(my_style);
+        titleRow.createCell(teamNameCol).setCellStyle(my_style);
+        titleRow.createCell(roundCol).setCellStyle(my_style);
+        titleRow.createCell(matchStartCol).setCellStyle(my_style);
+        titleRow.createCell(tableCol).setCellStyle(my_style);
         
         // put in the headers
         my_style.setAlignment(HorizontalAlignment.LEFT);
-        headerRow.createCell(0).setCellValue("Team #");
-        headerRow.getCell(0).setCellStyle(my_style);
-        headerRow.createCell(1).setCellValue("Round");
-        headerRow.getCell(1).setCellStyle(my_style);
-        headerRow.createCell(2).setCellValue("Match Start");
-        headerRow.getCell(2).setCellStyle(my_style);
-        headerRow.createCell(3).setCellValue("Table");
-        headerRow.getCell(3).setCellStyle(my_style);
+        headerRow.createCell(teamNumberCol).setCellValue("Team #");
+        headerRow.getCell(teamNumberCol).setCellStyle(my_style);
+        headerRow.createCell(teamNameCol).setCellValue("Team Name");
+        headerRow.getCell(teamNameCol).setCellStyle(my_style);
+        headerRow.createCell(roundCol).setCellValue("Round");
+        headerRow.getCell(roundCol).setCellStyle(my_style);
+        headerRow.createCell(matchStartCol).setCellValue("Match Start");
+        headerRow.getCell(matchStartCol).setCellStyle(my_style);
+        headerRow.createCell(tableCol).setCellValue("Table");
+        headerRow.getCell(tableCol).setCellStyle(my_style);
         for (int table = 0; table < matchColorTable.size(); table++) {
             for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
                 // include wild card matches
@@ -758,9 +811,6 @@ public class ExcelFileReader {
                         LocalTime startTime = slot.getStartTime();
                         matchLocation = slot.getTableIndex();
                         int teamNumberRow = slot.getTeamNumber();
-                        if (teamNumberRow == 999999) {
-                            teamNumberRow = teamCount + 1;
-                        }
                         
                         if (matchLocation == table) {
                             if (slot.isPracticeMatch()) {
@@ -789,15 +839,18 @@ public class ExcelFileReader {
         // setup printing
         sheet.setRepeatingRows(CellRangeAddress.valueOf("1:2"));
         sheet.setPrintGridlines(true);
-        // Set column width (50 characters * character unit size of 1/256)
-        sheet.setColumnWidth(0, 50*256);
-        for (int c = 1;c < headerRow.getLastCellNum(); c++) {
+        for (int c = 0;c < headerRow.getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
         }
+        // Set column width (50 characters * character unit size of 1/256)
+        sheet.setColumnWidth(teamNameCol, 50*256);
     }
-
+    
     public void UpdateJudgingQueueingTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
-
+        final int teamNumberCol = 0;
+        final int teamNameCol = 1;
+        final int judgingStartTimeCol = 2;
+        final int judgingRoomCol = 3;
         String ret = "";
         String sheetName = "JudgeQueueing";
         
@@ -826,10 +879,9 @@ public class ExcelFileReader {
         /* attach the font to the style created earlier */
         my_style.setFont(my_font);
         /* At this stage, we have a bold style created which we can attach to a cell */
-        
         // setup title row
         sheet.addMergedRegion(CellRangeAddress.valueOf("A1:C1"));
-        titleRow.createCell(0).setCellValue("Per Judging Room Schedule");
+        titleRow.createCell(teamNumberCol).setCellValue("Per Judging Room Schedule");
         my_style.setAlignment(HorizontalAlignment.CENTER);
         titleRow.getCell(0).setCellStyle(my_style);
         titleRow.createCell(1).setCellStyle(my_style);
@@ -838,12 +890,14 @@ public class ExcelFileReader {
         
         // put in the headers
         my_style.setAlignment(HorizontalAlignment.LEFT);
-        headerRow.createCell(0).setCellValue("Team #");
-        headerRow.getCell(0).setCellStyle(my_style);
-        headerRow.createCell(1).setCellValue("Judging Start Time");
-        headerRow.getCell(1).setCellStyle(my_style);
-        headerRow.createCell(2).setCellValue("Judging Room");
-        headerRow.getCell(2).setCellStyle(my_style);
+        headerRow.createCell(teamNumberCol).setCellValue("Team #");
+        headerRow.getCell(teamNumberCol).setCellStyle(my_style);
+        headerRow.createCell(teamNameCol).setCellValue("Team Name");
+        headerRow.getCell(teamNameCol).setCellStyle(my_style);
+        headerRow.createCell(judgingStartTimeCol).setCellValue("Judging Start Time");
+        headerRow.getCell(judgingStartTimeCol).setCellStyle(my_style);
+        headerRow.createCell(judgingRoomCol).setCellValue("Judging Room");
+        headerRow.getCell(judgingRoomCol).setCellStyle(my_style);
         for (int room = 0; room < judingColorTable.size(); room++) {
             for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
                 // include wild card matches
@@ -876,17 +930,23 @@ public class ExcelFileReader {
         // setup printing
         sheet.setRepeatingRows(CellRangeAddress.valueOf("1:2"));
         sheet.setPrintGridlines(true);
-        // Set column width (50 characters * character unit size of 1/256)
-        sheet.setColumnWidth(0, 50*256);
         for (int c = 1;c < headerRow.getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
         }
+        // Set column width (50 characters * character unit size of 1/256)
+        sheet.setColumnWidth(teamNameCol, 50*256);
     }
 
     public void UpdateEmceeTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
         ArrayList<ScheduleSlot> matches = new ArrayList<ScheduleSlot>();
         String ret = "";
         String sheetName = "Emcee Tab";
+
+        final int teamNumberCol = 0;
+        final int teamNameCol = 1;
+        final int roundCol = 2;
+        final int matchStartCol = 3;
+        final int tableCol = 4;
         
         // delete the match queueing sheet and recreate it
         int sheetIndex = inputWorkbook.getSheetIndex(sheetName);
@@ -915,24 +975,27 @@ public class ExcelFileReader {
         /* At this stage, we have a bold style created which we can attach to a cell */
         
         // setup title row
-        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:D1"));
-        titleRow.createCell(0).setCellValue("Emcee Sheet");
+        sheet.addMergedRegion(CellRangeAddress.valueOf("A1:E1"));
+        titleRow.createCell(teamNumberCol).setCellValue("Emcee Sheet");
         my_style.setAlignment(HorizontalAlignment.CENTER);
-        titleRow.getCell(0).setCellStyle(my_style);
-        titleRow.createCell(1).setCellStyle(my_style);
-        titleRow.createCell(2).setCellStyle(my_style);
-        titleRow.createCell(3).setCellStyle(my_style);
+        titleRow.getCell(teamNumberCol).setCellStyle(my_style);
+        titleRow.createCell(teamNameCol).setCellStyle(my_style);
+        titleRow.createCell(roundCol).setCellStyle(my_style);
+        titleRow.createCell(matchStartCol).setCellStyle(my_style);
+        titleRow.createCell(tableCol).setCellStyle(my_style);
         
         // put in the headers
         my_style.setAlignment(HorizontalAlignment.LEFT);
-        headerRow.createCell(0).setCellValue("Team #");
-        headerRow.getCell(0).setCellStyle(my_style);
-        headerRow.createCell(1).setCellValue("Round");
-        headerRow.getCell(1).setCellStyle(my_style);
-        headerRow.createCell(2).setCellValue("Match Start");
-        headerRow.getCell(2).setCellStyle(my_style);
-        headerRow.createCell(3).setCellValue("Table");
-        headerRow.getCell(3).setCellStyle(my_style);
+        headerRow.createCell(teamNumberCol).setCellValue("Team #");
+        headerRow.getCell(teamNumberCol).setCellStyle(my_style);
+        headerRow.createCell(teamNameCol).setCellValue("Team Name");
+        headerRow.getCell(teamNameCol).setCellStyle(my_style);
+        headerRow.createCell(roundCol).setCellValue("Round");
+        headerRow.getCell(roundCol).setCellStyle(my_style);
+        headerRow.createCell(matchStartCol).setCellValue("Match Start");
+        headerRow.getCell(matchStartCol).setCellStyle(my_style);
+        headerRow.createCell(tableCol).setCellValue("Table");
+        headerRow.getCell(tableCol).setCellStyle(my_style);
         for (int t = 0; t < scheduleInfo.getNumberOfTimeSlots(); t++) {
             // include the wildcard team
             for (int team = 0; team < teamCount + 1; team++) {
@@ -977,9 +1040,6 @@ public class ExcelFileReader {
                 }
                 oldStartTime = startTime;
             }
-            if (team == 999999) {
-                team = teamCount + 1;
-            }
             if (slot.isPracticeMatch()) {
                 matchRow = sheet.createRow(row++);
                 FillMatchDataRow(matchRow, startTime, "Practice", matchColorTable.get(matchLocation), team);
@@ -1002,19 +1062,20 @@ public class ExcelFileReader {
         // setup printing
         sheet.setRepeatingRows(CellRangeAddress.valueOf("1:2"));
         sheet.setPrintGridlines(true);
-        // Set column width (50 characters * character unit size of 1/256)
-        sheet.setColumnWidth(0, 50*256);
-        for (int c = 1;c < headerRow.getLastCellNum(); c++) {
+        for (int c = 0;c < headerRow.getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
         }
+        // Set column width (50 characters * character unit size of 1/256)
+        sheet.setColumnWidth(teamNameCol, 50*256);
         Footer footer = sheet.getFooter();  
         footer.setCenter( "Page " + HeaderFooter.page() + " of " + HeaderFooter.numPages() );  
     }
     private void FillMatchDataRow(XSSFRow row, LocalTime startTime, String roundType, String table, int teamNumber) {
         XSSFCell teamNumberCell = row.createCell(0);
-        XSSFCell roundTypeCell = row.createCell(1);
-        XSSFCell startTimeCell = row.createCell(2);
-        XSSFCell tableCell = row.createCell(3);
+        XSSFCell teamNameCell = row.createCell(1);
+        XSSFCell roundTypeCell = row.createCell(2);
+        XSSFCell startTimeCell = row.createCell(3);
+        XSSFCell tableCell = row.createCell(4);
 
         // Cell formatting
         CreationHelper createHelper = inputWorkbook.getCreationHelper();  
@@ -1032,15 +1093,23 @@ public class ExcelFileReader {
         tableCell.setCellFormula(formula);
         formulaEvaluator.evaluateFormulaCell(tableCell);
         
-        formula = "_xlfn.CONCAT(Schedule!A" + teamRow + ")";
-        teamNumberCell.setCellFormula(formula);
-        formulaEvaluator.evaluateFormulaCell(teamNumberCell);
+        if (teamNumber != 999999) {
+            formula = "_xlfn.CONCAT(Team List!B" + teamRow + ")";
+            teamNumberCell.setCellFormula(formula);
+            formulaEvaluator.evaluateFormulaCell(teamNumberCell);
+            formula = "_xlfn.CONCAT(Team List!C" + teamRow + ")";
+            teamNameCell.setCellFormula(formula);
+            formulaEvaluator.evaluateFormulaCell(teamNameCell);
+        } else {
+            teamNameCell.setCellValue("Wild Card Team");
+        }
     }
 
     private void FillJudgingDataRow(XSSFRow row, LocalTime startTime, String room, int teamNumber) {
         XSSFCell teamNumberCell = row.createCell(0);
-        XSSFCell startTimeCell = row.createCell(1);
-        XSSFCell roomCell = row.createCell(2);
+        XSSFCell teamNameCell = row.createCell(1);
+        XSSFCell startTimeCell = row.createCell(2);
+        XSSFCell roomCell = row.createCell(3);
 
         // Cell formatting
         CreationHelper createHelper = inputWorkbook.getCreationHelper();  
@@ -1056,8 +1125,11 @@ public class ExcelFileReader {
         roomCell.setCellFormula(formula);
         formulaEvaluator.evaluateFormulaCell(roomCell);
         
-        formula = "_xlfn.CONCAT(Schedule!A" + teamRow + ")";
+        formula = "_xlfn.CONCAT(Team List!B" + teamRow + ")";
         teamNumberCell.setCellFormula(formula);
+        formulaEvaluator.evaluateFormulaCell(teamNumberCell);
+        formula = "_xlfn.CONCAT(Team List!C" + teamRow + ")";
+        teamNameCell.setCellFormula(formula);
         formulaEvaluator.evaluateFormulaCell(teamNumberCell);
     }
 }
