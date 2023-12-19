@@ -900,7 +900,6 @@ public class ExcelFileReader {
 
         int teamCount = scheduleInfo.getTeamCount();
         int row = 0;
-        int blankRow = 0;
         XSSFRow titleRow = sheet.createRow(row++);
         XSSFRow headerRow = sheet.createRow(row++);
         XSSFRow matchRow = null;
@@ -957,10 +956,26 @@ public class ExcelFileReader {
         matchColorStyle.setFillForegroundColor(IndexedColors.GREY_25_PERCENT.getIndex());
         
         Collections.sort(matches);
+        int matchesOnPage = 0;
+        LocalTime oldStartTime = null;
         for (ScheduleSlot slot : matches) {
             LocalTime startTime = slot.getStartTime();
             matchLocation = slot.getTableIndex();
             int team = slot.getTeamNumber();
+
+            if (oldStartTime == null) {
+                oldStartTime = startTime;
+            }
+            if (oldStartTime.isBefore(startTime)) {
+                if (matchesOnPage == 14) {
+                    sheet.setRowBreak(row-1);
+                    matchesOnPage = 0;
+                } else {
+                    matchRow = sheet.createRow(row++);
+                    matchesOnPage++;
+                }
+                oldStartTime = startTime;
+            }
             if (team == 999999) {
                 team = teamCount + 1;
             }
@@ -982,13 +997,6 @@ public class ExcelFileReader {
                     matchRow.getCell(c).setCellStyle(matchColorStyle);
                 }
             }
-            if ((row % 45) == 0) {
-                sheet.setRowBreak(row);
-                blankRow = -2;
-            } else if ((blankRow % 2) == 1) {
-                matchRow = sheet.createRow(row++);
-            }
-            blankRow++;
         }
         // setup printing
         sheet.setRepeatingRows(CellRangeAddress.valueOf("1:2"));

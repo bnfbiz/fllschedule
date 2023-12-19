@@ -78,12 +78,6 @@ public class ScheduleSlot implements Comparable<ScheduleSlot> {
             return -1;
         } else if (start.isAfter(otherSlot.getStartTime())) {
             return 1;
-        } else {
-            if (getTableIndex() < otherSlot.getTableIndex()) {
-                return -1;
-            } else if (getTableIndex() > otherSlot.getTableIndex()) {
-                return 1;
-            }
         }
         return 0;
     }
