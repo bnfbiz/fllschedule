@@ -533,12 +533,11 @@ public class ExcelFileReader {
             }
         }
         // setup printing
-        sheet.setRepeatingRows(CellRangeAddress.valueOf("1:1"));
         sheet.setPrintGridlines(true);
         // Set column width (50 characters * character unit size of 1/256)
         sheet.setColumnWidth(0, 50*256);
         rows[0].getCell(0).setCellStyle(my_style);
-
+        
         // Auto size the columns
         for (int c = 1; c < rows[0].getLastCellNum(); c++) {
             sheet.autoSizeColumn(c);
@@ -554,6 +553,8 @@ public class ExcelFileReader {
         pageSetup.setPaperSize(PaperSize.LEGAL_PAPER);
         pageSetup.setLandscape(true);
         pageSetup.setOrientation(PrintOrientation.LANDSCAPE);
+        // due to a bug this needs to be after setting the orientation
+        sheet.setRepeatingRows(CellRangeAddress.valueOf("1:1"));
     }
 
     public void createUpdatedWorkbook(String filename) {
