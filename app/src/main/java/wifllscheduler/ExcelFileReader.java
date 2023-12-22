@@ -10,11 +10,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.time.LocalTime;
-import java.awt.Color;
 
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
-import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -25,15 +23,10 @@ import org.apache.poi.hssf.usermodel.HeaderFooter;
 
 import wifllscheduler.ScheduleSlot.SlotType;
 
-import org.apache.poi.hpsf.Array;
-import org.apache.poi.hssf.usermodel.HSSFCellStyle;
-import org.apache.poi.hssf.usermodel.HSSFFont;
-import org.apache.poi.ss.format.CellFormatType;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
-// import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Footer;
@@ -41,8 +34,6 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PrintOrientation;
-import org.apache.poi.ss.usermodel.PrintSetup;
-// import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
@@ -121,8 +112,6 @@ public class ExcelFileReader {
         int judgingHeaderColumn = 0;
         for (int rn = 0; rn <= rowEnd; rn++) {
             XSSFRow row = tournamentSetupSheet.getRow(rn);
-            XSSFCell colorCell;
-            XSSFCell roomCell;
             XSSFCell timeCell;
             String time;
             XSSFCell c = row.getCell(judgingHeaderColumn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -161,18 +150,11 @@ public class ExcelFileReader {
                          * the Judging Times (judgingHeaderColumn + 2)
                          */
                         for (rn++; rn <= rowEnd; rn++) {
-                            String color;
 
                             row = tournamentSetupSheet.getRow(rn);
                             // Process the judging colors
-                            colorCell = row.getCell(judgingHeaderColumn, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                            color = formatter.formatCellValue(colorCell);
                             judingColorTable.add("TournamentSetup!A" + (rn + 1));
-                            
-                            // Process the Judging rooms
-                            roomCell = row.getCell(judgingHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                            String room = formatter.formatCellValue(roomCell);
-                            
+                                                        
                             // Process the judging times
                             timeCell = row.getCell(judgingHeaderColumn + 2, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                             String judgingTime = formatter.formatCellValue(timeCell);
@@ -347,8 +329,6 @@ public class ExcelFileReader {
         final int comp2TableCol = 10;
         final int comp3TimeCol = 11;
         final int comp3TableCol = 12;
-
-        String ret = "";
         
         // delete the schedule sheet and recreate it
         int sheetIndex = inputWorkbook.getSheetIndex("Schedule");
@@ -615,8 +595,6 @@ public class ExcelFileReader {
     }
 
     public void UpdateTournamentImportSheet(Schedule scheduleInfo, Scheduler schedulerInfo) {
-
-        String ret = "";
         String sheetName = "_DONOTEDITFLLTournamentImport";
         
         // delete the schedule sheet and recreate it
@@ -663,7 +641,8 @@ public class ExcelFileReader {
                     LocalTime startTime = slot.getStartTime();
                     LocalTime endTime = slot.getEndTime();
                     if (slot.isCoachMeetingSlot()) {
-                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "General", 0, "Coaches Meeting", "", team);
+                        // setting round to 1 due to a loader but
+                        InsertInventoryDataToRow(rows[row], tournamentDate, startTime, endTime, "General", 1, "Coaches Meeting", "", team);
                     } else if (slot.isJudgingSlot()) {
                         int judgingSlotForTime = scheduleInfo.scheduleSlot(startTime);
                         if (judgingSlotForTime == t) {
@@ -751,7 +730,6 @@ public class ExcelFileReader {
         final int roundCol = 2;
         final int matchStartCol = 3;
         final int tableCol = 4;
-        String ret = "";
         String sheetName = "MatchQueueing";
         
         // delete the match queueing sheet and recreate it
@@ -851,7 +829,6 @@ public class ExcelFileReader {
         final int teamNameCol = 1;
         final int judgingStartTimeCol = 2;
         final int judgingRoomCol = 3;
-        String ret = "";
         String sheetName = "JudgeQueueing";
         
         // delete the match queueing sheet and recreate it
@@ -939,7 +916,6 @@ public class ExcelFileReader {
 
     public void UpdateEmceeTab(Schedule scheduleInfo, Scheduler schedulerInfo) {
         ArrayList<ScheduleSlot> matches = new ArrayList<ScheduleSlot>();
-        String ret = "";
         String sheetName = "Emcee Tab";
 
         final int teamNumberCol = 0;
