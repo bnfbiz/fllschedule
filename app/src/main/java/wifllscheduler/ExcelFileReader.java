@@ -127,6 +127,7 @@ public class ExcelFileReader {
                         c = row.getCell(judgingHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
                         int numJudgingRooms = Integer.parseInt(formatter.formatCellValue(c));
                         scheduleData.setJudgingPanelNum(numJudgingRooms);
+                        scheduleData.setPracticeTeamOffset(numJudgingRooms*2);
                         break;
                     case "Judging Timeslots":
                         c = row.getCell(judgingHeaderColumn + 1, Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
@@ -355,9 +356,9 @@ public class ExcelFileReader {
          * +1 for header
          * Team Count
          * +1 for wild card team
-         * +2 for potential upto 3 wild card matches
+         * +5 for potential upto 6 wild card matches
          */
-        rows = new XSSFRow[scheduleInfo.getTeamCount()+ 1 + 1 + 2];
+        rows = new XSSFRow[scheduleInfo.getTeamCount()+ 1 + 1 + 10];
         for (int c = 0; c < teamCount+1 + 1 + 2; c++) {
             int teamRow = c + 1;
             rows[c]= sheet.createRow(c);
@@ -383,6 +384,8 @@ public class ExcelFileReader {
         rows[teamCount+1].createCell(teamNameCol).setCellValue("Wild Card");
         rows[teamCount+2] = sheet.createRow(teamCount+2);
         rows[teamCount+3] = sheet.createRow(teamCount+3);
+        rows[teamCount+4] = sheet.createRow(teamCount+4);
+        rows[teamCount+5] = sheet.createRow(teamCount+5);
         rows[0].createCell(teamNumberCol).setCellValue("Team #");
         rows[0].createCell(teamNameCol).setCellValue("Team Name");
         rows[0].createCell(coachesMeetingTimeCol).setCellValue("Coach Meeting");
