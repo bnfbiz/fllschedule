@@ -7,10 +7,17 @@
 
         {
             "type": "java",
-            "name": "Launch with Arguments Prompt",
+            "name": "8 teams 2 judging panels",
             "request": "launch",
             "mainClass": "",
-            "args": "--inputFile 24Team4JudgingRooms.xlsx -o 2023-24Team4JudgingRooms.xlsx"
+            "args": "--inputFile scheduleout/8Team2JudgingRooms.xlsx -o scheduleout/2024-8Team2JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "10 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/10Team4JudgingRooms.xlsx -o scheduleout/2024-10Team4JudgingRooms.xlsx"
         },
         {
             "type": "java",
@@ -18,43 +25,133 @@
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 16Team3JudgingRooms.xlsx -o 2023-16Team3JudgingRooms.xlsx"
-        },{
+        },
+        {
             "type": "java",
             "name": "16 teams 4 judging panels",
             "request": "launch",
             "mainClass": "",
-            "args": "--inputFile 16Team4JudgingRooms.xlsx -o 2023-16Team4JudgingRooms.xlsx"
+            "args": "--inputFile scheduleout/16Team4JudgingRooms.xlsx -o scheduleout/2024-16Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "17 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/17Team4JudgingRooms.xlsx -o scheduleout/2024-17Team4JudgingRooms.xlsx"
         },{
+            "type": "java",
+            "name": "18 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/18Team4JudgingRooms.xlsx -o scheduleout/2024-18Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "22 teams 4 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/22Team4JudgingRooms.xlsx -o scheduleout/2024-22Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "22 teams 5 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/22Team5JudgingRooms.xlsx -o scheduleout/2024-22Team5JudgingRooms.xlsx"
+        },
+        {
             "type": "java",
             "name": "23 teams 4 judging panels",
             "request": "launch",
             "mainClass": "",
-            "args": "--inputFile 23Team4JudgingRooms.xlsx -o 2023-23Team4JudgingRooms.xlsx"
-        },{
+            "args": "--inputFile scheduleout/23Team4JudgingRooms.xlsx -o scheduleout/2024-23Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "23 teams 5 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/23Team5JudgingRooms.xlsx -o scheduleout/2024-23Team5JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "24 Teams 4 Judging Panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/24Team4JudgingRooms.xlsx -o scheduleout/2024-24Team4JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "24 Teams 5 Judging Panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/24Team5JudgingRooms.xlsx -o scheduleout/2024-24Team5JudgingRooms.xlsx"
+        },
+        {
             "type": "java",
             "name": "25 teams 5 judging panels",
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 25Team5JudgingRooms.xlsx -o 2023-25Team5JudgingRooms.xlsx"
-        },{
+        },
+        {
+            "type": "java",
+            "name": "26 teams 5 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/26Team5JudgingRooms.xlsx -o scheduleout/2024-26Team5JudgingRooms.xlsx"
+        },
+        {
             "type": "java",
             "name": "29 teams 5 judging panels",
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 29Team5JudgingRooms.xlsx -o 2023-29Team5JudgingRooms.xlsx"
-        },{
-                "type": "java",
-                "name": "30 teams 5 judging panels",
-                "request": "launch",
-                "mainClass": "",
-                "args": "--inputFile 30Team5JudgingRooms.xlsx -o 2023-30Team5JudgingRooms.xlsx"
-        },{
+        },
+        {
+            "type": "java",
+            "name": "30 teams 5 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile 30Team5JudgingRooms.xlsx -o 2023-30Team5JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "30 teams 6 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/30Team6JudgingRooms.xlsx -o scheduleout/2024-30Team6JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "32 teams 6 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/32Team6JudgingRooms.xlsx -o scheduleout/2024-32Team6JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "35 teams 6 judging panels",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/35Team6JudgingRooms.xlsx -o scheduleout/2024-35Team6JudgingRooms.xlsx"
+        },
+        {
+            "type": "java",
+            "name": "35 teams 6 judging panels 8 tables",
+            "request": "launch",
+            "mainClass": "",
+            "args": "--inputFile scheduleout/35Team6JudgingRooms8tables.xlsx -o scheduleout/2024-35Team6JudgingRooms8tables.xlsx"
+        },
+        {
             "type": "java",
             "name": "36 teams 6 judging panels",
             "request": "launch",
             "mainClass": "",
             "args": "--inputFile 36Team6JudgingRooms.xlsx -o 2023-36Team6JudgingRooms.xlsx"
-        },{
+        },
+        {
             "type": "java",
             "name": "Current File",
             "request": "launch",
